@@ -1,6 +1,6 @@
 # BimJ.github.io
 For test and learning
-<!DOCTYPE html>
+
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
