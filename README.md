@@ -4,7 +4,7 @@ For test and learning
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <title>Kjell & Co Schema</title>
+  <title>Schema</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
     h1 { text-align: center; }
