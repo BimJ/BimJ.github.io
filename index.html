@@ -89,8 +89,12 @@
       <!-- Rader genereras med JavaScript -->
     </tbody>
   </table>
-
+  
+ <!-- Citat och knapp -->
+  <div id="citat">Laddar roligt citat...</div>
+  <button id="citat-knapp" onclick="visaNyttCitat()">😂</button>
   <script>
+    
     const tasks = [
       { label: "", icon: "" },
       { label: "Chatt", icon: "💬" },
@@ -158,6 +162,35 @@
       const label = select.parentElement.querySelector(".name-label");
       label.textContent = select.value || "Ingen vald";
     }
+    
+    // Citatfunktion
+    const citatUrl = "https://raw.githubusercontent.com/BimJ/BimJ.github.io/refs/heads/main/roliga_citat.json";
+    let citatLista = [];
+
+    function hämtaCitat() {
+      fetch(citatUrl)
+        .then(response => {
+          if (!response.ok) throw new Error("Nätverksfel");
+          return response.json();
+        })
+        .then(data => {
+          citatLista = data;
+          visaNyttCitat();
+        })
+        .catch(error => {
+          console.error("Kunde inte hämta citat:", error);
+          document.getElementById("citat").textContent = "Kunde inte ladda citat.";
+        });
+    }
+
+    function visaNyttCitat() {
+      if (citatLista.length > 0) {
+        const slumpCitat = citatLista[Math.floor(Math.random() * citatLista.length)];
+        document.getElementById("citat").textContent = `"${slumpCitat}"`;
+      }
+    }
+
+    hämtaCitat();
   </script>
 </body>
 </html>
