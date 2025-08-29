@@ -35,12 +35,15 @@
     .möte { background-color: #f44336; color: white; }
     .företag { background-color: #90caf9; color: white; }
     .sick { background-color: #ef9a9a; color: black; }
-    select, input[type="text"] {
+    select, input[type="text"], input[type="date"] {
       width: 100%;
       padding: 5px;
       font-size: 14px;
       box-sizing: border-box;
       margin-bottom: 4px;
+    }
+    .date-input {
+      width: 150px; /* Justera bredden här för att göra rutan mindre */
     }
     .name-label {
       font-weight: bold;
@@ -51,12 +54,17 @@
 </head>
 <body>
   <h1>Schema</h1>
+  
   <table id="schedule">
     <thead>
       <tr>
+        <th>
+          <label for="date">Datum:</label>
+          <input type="date" id="date" name="date" class="date-input" />
+          Tid
+        </th>
         <script>
           const names = ["Bim", "Rasmus", "Oliver", "Dennis", "Hampus", "Emil", "Kungens Kurva", "Jennifer", "Huy", "Melanie"];
-          document.write('<th>Tid</th>');
           names.forEach((_, index) => {
             document.write(`
               <th>
