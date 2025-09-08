@@ -35,6 +35,7 @@
     .möte { background-color: #f44336; color: white; }
     .företag { background-color: #90caf9; color: white; }
     .sick { background-color: #ef9a9a; color: black; }
+    .Vab { background-color: #ef9a9a; color: black; }
     select, input[type="text"], input[type="date"] {
       width: 100%;
       padding: 5px;
@@ -64,7 +65,7 @@
           Tid
         </th>
         <script>
-          const names = ["Bim", "Rasmus", "Oliver", "Dennis", "Hampus", "Emil", "Kungens Kurva", "Jennifer", "Huy", "Melanie"];
+          const names = ["Bim", "Rasmus", "Oliver", "Dennis", "Hampus", "Emil", "Kungens Kurva", "Jennifer", "Huy", "Melanie", "Jocke"];
           names.forEach((_, index) => {
             document.write(`
               <th>
@@ -107,6 +108,7 @@
       { label: "Möte", icon: "🗓️" },
       { label: "Admin-Företag", icon: "🏢" },
       { label: "Semester", icon: "🌻" },
+      { label: "Vab", icon: "👶" },
       { label: "Sjuk", icon: "🤒" }
     ];
     const colors = {
@@ -118,6 +120,7 @@
       "Admin-Företag": "företag",
       "Semester": "semester",
       "Möte": "möte",
+      "Vab": "vab",
       "Sjuk": "sjuk"
     };
 
