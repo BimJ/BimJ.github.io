@@ -2,35 +2,104 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <title>Projektportal</title>
+  <title>Projektportalen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      padding: 20px;
+      background-color: #6BABCC;
     }
-    h1 {
+
+    /* Meny överst */
+    .navbar {
+      background-color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.5em;
       color: #333;
     }
-    .project-link {
-      margin: 10px 0;
-      padding: 10px;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      display: inline-block;
+
+    .navbar a {
+      margin-left: 15px;
       text-decoration: none;
       color: #007BFF;
+      font-weight: bold;
     }
-    .project-link:hover {
-      background-color: #e9e9e9;
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    /* Bannerbild som liten och centrerad */
+    .banner-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .banner-container img {
+      width: 1000px; /* Justera storlek här */
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Innehåll */
+    .content {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .content a {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: white;
+      color: #333;
+      text-decoration: none;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .content a:hover {
+      background-color: #e0e0e0;
     }
   </style>
 </head>
 <body>
-  <h1>Välkommen till Projektportalen</h1>
-  <p>Välj ett projekt nedan:</p>
 
-  <a class="project-link" href="schema.html">🗓️ Skapa Schema
+  <!-- Meny -->
+  <div class="navbar">
+    <h1>Projektportalen</h1>
+    <div>
+      <a href="index.html">📅 Skapa Schema</a>
+      <a href="#">📁 Projekt 2</a>
+      <a href="#">📊 Statistik</a>
+    </div>
+  </div>
+
+  <!-- Bannerbild som liten och centrerad -->
+  <div class="banner-container">
+    <img src="banner.jpg" alt="Projektportalen Banner">
+    <!-- Byt ut 'banner.jpg' mot din faktiska bild eller URL -->
+  </div>
+
+  <!-- Innehåll -->
+  <div class="content">
+    <h2>Välj ett projekt nedan</h2>
+    <a href="index.html">📅 Skapa Schema</a>
+    <!-- Lägg till fler projektlänkar här -->
+  </div>
+
+</body>
 </html>
-
