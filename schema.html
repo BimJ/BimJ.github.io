@@ -64,7 +64,7 @@
           Tid
         </th>
         <script>
-          const names = ["Bim", "Rasmus", "Oliver", "Dennis", "Hampus", "Emil", "Kungens Kurva", "Jennifer", "Huy", "Melanie", "Jocke"];
+          const names = ["Bim", "Rasmus", "Oliver", "Dennis", "Hampus", "Emil", "Kungens Kurva", "Jennifer", "Huy", "Melanie", "Jocke", "Kim"];
           names.forEach((_, index) => {
             document.write(`
               <th>
@@ -137,7 +137,7 @@
       timeCell.textContent = `${hour.toString().padStart(2, '0')}-${(hour + 1).toString().padStart(2, '0')}`;
       row.appendChild(timeCell);
 
-      for (let i = 0; i < 11; i++) {
+      for (let i = 0; i < 12; i++) {
         const cell = document.createElement("td");
         const select = document.createElement("select");
 
