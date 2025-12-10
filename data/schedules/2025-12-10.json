@@ -1,0 +1,785 @@
+{
+  "date": "2025-12-10",
+  "tables": {
+    "schedule1": {
+      "headers": [
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        }
+      ],
+      "rows": [
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ]
+      ]
+    },
+    "schedule2": {
+      "headers": [
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        },
+        {
+          "comment": "",
+          "selectedName": "",
+          "nameLabel": "Ingen vald",
+          "special": ""
+        }
+      ],
+      "rows": [
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ],
+        [
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          },
+          {
+            "value": "",
+            "className": "",
+            "tdClass": ""
+          }
+        ]
+      ]
+    }
+  }
+}
