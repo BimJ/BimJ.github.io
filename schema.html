@@ -3,25 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <title>Schema</title>
-  <style>/* same styles as before (omitted for brevity in this message) */
-  body{font-family:Arial,Helvetica,sans-serif;padding:20px}
-  .date-wrapper{text-align:center;margin-top:10px;margin-bottom:20px}
-  .schema-wrapper{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
-  table{border-collapse:collapse;table-layout:fixed}
-  th,td{border:1px solid #ccc;text-align:center;padding:5px;vertical-align:middle}
-  th{background-color:#1e88e5;color:white;height:120px}
-  td:first-child{width:80px;font-weight:bold}
-  .vägg{background-color:#9e9e9e;color:white}
-  select,input[type="text"],input[type="date"]{width:100%;padding:5px;font-size:14px;box-sizing:border-box;margin-bottom:4px}
-  .date-input{width:150px}
-  .btn{padding:6px 10px;margin-left:6px;font-size:14px}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .date-wrapper {
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .schema-wrapper {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .schema-wrapper table {
+      width: 48%;
+    }
+
+    table {
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      text-align: center;
+      padding: 5px;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #1e88e5;
+      color: white;
+      height: 120px;
+    }
+
+    td:first-child {
+      width: 80px;
+      font-weight: bold;
+    }
+
+    .chatt1, .chatt2 { background-color: #fdd835; color: black; }
+    .telefon1, .telefon2 { background-color: #43a047; color: white; }
+    .admin, .meta { background-color: #1e88e5; color: white; }
+    .lunch { background-color: #ffe0b2; color: black; }
+    .semester { background-color: #ff9800; color: black; }
+    .mote { background-color: #f44336; color: white; }
+    .foretag { background-color: #90caf9; color: white; }
+    .sjuk, .vab { background-color: #ef9a9a; color: black; }
+    .vagg { background-color: #9e9e9e; color: white; }
+
+    select, input[type="text"], input[type="date"] {
+      width: 100%;
+      padding: 5px;
+      font-size: 14px;
+      box-sizing: border-box;
+      margin-bottom: 4px;
+    }
+
+    .date-input {
+      width: 150px;
+    }
+
+    .name-label {
+      font-weight: bold;
+      display: block;
+      margin-top: 4px;
+    }
+    .controls-row {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .btn {
+      padding: 6px 10px;
+      margin-left: 6px;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
-  <div style="text-align:center"><img src="SchemaBanner.jpg" alt="Schema" style="max-width:10%;height:auto"/></div>
+  <div style="text-align: center;">
+    <img src="SchemaBanner.jpg" alt="Schema" style="max-width: 10%; height: auto;" />
+  </div>
+
   <div class="date-wrapper">
     <input type="date" id="date" class="date-input" />
-    <div style="margin-top:8px;">
+    <div class="controls-row">
       <button id="saveServerBtn" class="btn">Spara (public)</button>
       <button id="loadServerBtn" class="btn">Ladda (från server)</button>
       <button id="clearDateBtn" class="btn">Radera lokalt</button>
@@ -33,130 +110,437 @@
     <table id="schedule2"></table>
   </div>
 
-  <div id="citat" style="margin-top:50px;font-style:italic;text-align:center;font-size:18px;color:#555">Laddar roligt citat...</div>
+  <div id="citat" style="margin-top: 50px; font-style: italic; text-align: center; font-size: 18px; color: #555;">
+    Laddar roligt citat...
+  </div>
 
   <script>
-    // Copy the same client-side code as previously pushed but remove GitHub token UI and handlers
-    const namesGroup1 = ["Bim","Rasmus","Oliver","Dennis","Hampus","Emil","August","Kungens Kurva"];
-    const namesGroup2 = ["Jennifer","Huy","Melanie","Jocke","Kim"];
-    const tasks = [{label:'',icon:''},{label:'Chatt 1',icon:'💬1️⃣'},{label:'Chatt 2',icon:'💬2️⃣'},{label:'Telefon 1',icon:'📞1️⃣'},{label:'Telefon 2',icon:'📞2️⃣'},{label:'Admin',icon:'🗂️'},{label:'Lunch',icon:'🍽️'},{label:'Meta & Trust',icon:'🛡️'},{label:'Möte',icon:'🗓️'},{label:'Admin-Företag',icon:'🏢'},{label:'Semester',icon:'🌻'},{label:'Vab',icon:'👶'},{label:'Sjuk',icon:'🤒'}];
-    const colors = {"Chatt 1":"chatt1","Chatt 2":"chatt2","Telefon 1":"telefon1","Telefon 2":"telefon2","Admin":"admin","Lunch":"lunch","Meta & Trust":"meta","Admin-Företag":"foretag","Semester":"semester","Möte":"mote","Vab":"vab","Sjuk":"sjuk","Vägg":"vägg"};
+    const namesGroup1 = ["Bim", "Rasmus", "Oliver", "Dennis", "Hampus", "Emil", "August", "Kungens Kurva"];
+    const namesGroup2 = ["Jennifer", "Huy", "Melanie", "Jocke", "Kim"];
 
-    // functions: skapaSchema, fillColumn, updateNameLabelInline, scheduleSave (local), buildPayloadForCurrentDate, applyPayloadToTables (same as before)
+    const tasks = [
+      { label: "", icon: "" },
+      { label: "Chatt 1", icon: "💬1️⃣" },
+      { label: "Chatt 2", icon: "💬2️⃣" },
+      { label: "Telefon 1", icon: "📞1️⃣" },
+      { label: "Telefon 2", icon: "📞2️⃣" },
+      { label: "Admin", icon: "🗂️" },
+      { label: "Lunch", icon: "🍽️" },
+      { label: "Meta & Trust", icon: "🛡️" },
+      { label: "Möte", icon: "🗓️" },
+      { label: "Admin-Företag", icon: "🏢" },
+      { label: "Semester", icon: "🌻" },
+      { label: "Vab", icon: "👶" },
+      { label: "Sjuk", icon: "🤒" }
+    ];
 
-    // For brevity we reuse functions from previous file; full code will be pushed in the actual commit (same logic as earlier but using JSON save/load via /api endpoints)
+    const colors = {
+      "Chatt 1": "chatt1",
+      "Chatt 2": "chatt2",
+      "Telefon 1": "telefon1",
+      "Telefon 2": "telefon2",
+      "Admin": "admin",
+      "Lunch": "lunch",
+      "Meta & Trust": "meta",
+      "Admin-Företag": "foretag",
+      "Semester": "semester",
+      "Möte": "mote",
+      "Vab": "vab",
+      "Sjuk": "sjuk",
+      "Vägg": "vagg"
+    };
 
-    // Minimal implementations here to wire save/load
-    function scheduleSave(){ /* local autosave already in previous file */ }
+    // Debounce for save
+    let saveTimeout = null;
+    function scheduleSave() {
+      if (saveTimeout) clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(saveCurrentSchedule, 400);
+    }
 
-    // Build payload function (same shape as server expects)
-    function buildPayloadForCurrentDate(dateInput) {
+    function skapaSchema(tabellId, namnLista, rubrik) {
+      const table = document.getElementById(tabellId);
+      table.innerHTML = ""; // töm tidigare innehåll
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+
+      const timeHeader = document.createElement("th");
+      timeHeader.innerHTML = `<strong>${rubrik}</strong><br/>Tid`;
+      headerRow.appendChild(timeHeader);
+
+      namnLista.forEach((namn, index) => {
+        const th = document.createElement("th");
+        th.innerHTML = `
+          <input type="text" placeholder="Kommentar..." data-header-comment />
+          <select data-header-name onchange="updateNameLabelInline(this)">
+            <option value="">Välj namn</option>
+            ${namnLista.map(n => `<option value="${n}">${n}</option>`).join('')}
+          </select>
+          <span class="name-label">Ingen vald</span>
+          <select data-header-special onchange="fillColumn(this, ${index + 1}, '${tabellId}')">
+            <option value=""> </option>
+            <option value="Semester">🌻 Semester</option>
+            <option value="Vab">👶 Vab</option>
+            <option value="Sjuk">🤒 Sjuk</option>
+            <option value="Vägg">🧱 Vägg</option>
+          </select>
+        `;
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      for (let hour = 8; hour < 18; hour++) {
+        const row = document.createElement("tr");
+        const timeCell = document.createElement("td");
+        timeCell.textContent = `${hour.toString().padStart(2, '0')}-${(hour + 1).toString().padStart(2, '0')}`;
+        row.appendChild(timeCell);
+
+        for (let i = 0; i < namnLista.length; i++) {
+          const cell = document.createElement("td");
+          const select = document.createElement("select");
+          select.dataset.row = hour - 8;
+          select.dataset.col = i;
+          select.dataset.table = tabellId;
+
+          tasks.forEach(task => {
+            const option = document.createElement("option");
+            option.value = task.label;
+            option.textContent = task.icon + (task.label ? " " + task.label : "");
+            select.appendChild(option);
+          });
+
+          select.addEventListener("change", () => {
+            select.className = colors[select.value] || "";
+            // markera cellens td om vägg
+            if (select.value === "Vägg") {
+              select.parentElement.className = "vagg";
+            } else {
+              if (select.parentElement.className === "vagg") {
+                select.parentElement.className = "";
+              }
+            }
+            scheduleSave();
+          });
+
+          cell.appendChild(select);
+          row.appendChild(cell);
+        }
+
+        tbody.appendChild(row);
+      }
+
+      table.appendChild(tbody);
+
+      // Koppla lyssnare på header inputs/selects för autosave
+      const headerComments = table.querySelectorAll('[data-header-comment]');
+      headerComments.forEach(i => i.addEventListener('input', scheduleSave));
+      const headerNames = table.querySelectorAll('[data-header-name]');
+      headerNames.forEach(s => s.addEventListener('change', (e) => {
+        updateNameLabelInline(e.target);
+        scheduleSave();
+      }));
+      const headerSpecials = table.querySelectorAll('[data-header-special]');
+      headerSpecials.forEach(s => s.addEventListener('change', scheduleSave));
+    }
+
+    function fillColumn(dropdown, colIndex, tabellId) {
+      const table = document.getElementById(tabellId);
+      const tbody = table.querySelector("tbody");
+      const value = dropdown.value;
+      // colIndex here is 1-based header index; the tbody cell is nth-child(colIndex+1) because first column is time
+      const selects = tbody.querySelectorAll(`tr td:nth-child(${colIndex + 1}) select`);
+      selects.forEach(select => {
+        select.value = value;
+        select.className = colors[value] || "";
+        if (value === "Vägg") {
+          select.parentElement.className = "vagg";
+        } else {
+          select.parentElement.className = "";
+        }
+      });
+      scheduleSave();
+    }
+
+    function updateNameLabelInline(select) {
+      const label = select.parentElement.querySelector(".name-label");
+      label.textContent = select.value || "Ingen vald";
+    }
+
+    function getStorageKeyForDate(dateStr) {
+      return 'bimj_schedule_' + dateStr;
+    }
+
+    function saveCurrentSchedule() {
+      const dateInput = document.getElementById('date').value;
+      if (!dateInput) return; // inget datum valt, spara inte
+
       const payload = { date: dateInput, tables: {} };
-      ['schedule1','schedule2'].forEach(tid=>{
+
+      ['schedule1', 'schedule2'].forEach(tid => {
         const table = document.getElementById(tid);
-        if(!table) return;
+        if (!table) return;
+        const header = table.querySelector('thead tr');
+        const headerCells = Array.from(header.querySelectorAll('th')).slice(1); // hoppa över tid-kolumnen
+        const headersData = headerCells.map(h => {
+          return {
+            comment: (h.querySelector('[data-header-comment]') ? h.querySelector('[data-header-comment]').value : ''),
+            selectedName: (h.querySelector('[data-header-name]') ? h.querySelector('[data-header-name]').value : ''),
+            nameLabel: (h.querySelector('.name-label') ? h.querySelector('.name-label').textContent : ''),
+            special: (h.querySelector('[data-header-special]') ? h.querySelector('[data-header-special]').value : '')
+          };
+        });
+
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr')).map(tr => {
+          const rowCells = Array.from(tr.querySelectorAll('td')).slice(1); // hoppa tid
+          return rowCells.map(td => {
+            const sel = td.querySelector('select');
+            return {
+              value: sel ? sel.value : '',
+              className: sel ? sel.className : '',
+              tdClass: td.className || ''
+            };
+          });
+        });
+
+        payload.tables[tid] = { headers: headersData, rows: rows };
+      });
+
+      try {
+        const key = getStorageKeyForDate(dateInput);
+        localStorage.setItem(key, JSON.stringify(payload));
+      } catch (e) {
+        console.error('Kunde inte spara schema:', e);
+      }
+    }
+
+    function loadScheduleForDate(dateInput) {
+      if (!dateInput) return;
+      const key = getStorageKeyForDate(dateInput);
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        try {
+          const payload = JSON.parse(raw);
+          applyPayloadToTables(payload);
+        } catch (e) {
+          console.error('Kunde inte läsa sparad data från localStorage:', e);
+        }
+      }
+    }
+
+    function applyPayloadToTables(payload) {
+      if (!payload) return;
+      ['schedule1', 'schedule2'].forEach(tid => {
+        const table = document.getElementById(tid);
+        const data = payload.tables && payload.tables[tid];
+        if (!table || !data) return;
+
+        // load headers
         const header = table.querySelector('thead tr');
         const headerCells = Array.from(header.querySelectorAll('th')).slice(1);
-        const headersData = headerCells.map(h=>({comment:(h.querySelector('[data-header-comment]')?h.querySelector('[data-header-comment]').value:''),selectedName:(h.querySelector('[data-header-name]')?h.querySelector('[data-header-name]').value:''),nameLabel:(h.querySelector('.name-label')?h.querySelector('.name-label').textContent:''),special:(h.querySelector('[data-header-special]')?h.querySelector('[data-header-special]').value:'')}));
+        headerCells.forEach((h, idx) => {
+          const commentEl = h.querySelector('[data-header-comment]');
+          const nameEl = h.querySelector('[data-header-name]');
+          const labelEl = h.querySelector('.name-label');
+          const specialEl = h.querySelector('[data-header-special]');
+
+          const headerDatum = data.headers[idx] || {};
+          if (commentEl) commentEl.value = headerDatum.comment || '';
+          if (nameEl) {
+            nameEl.value = headerDatum.selectedName || '';
+            if (labelEl) labelEl.textContent = headerDatum.nameLabel || (nameEl.value || 'Ingen vald');
+          }
+          if (specialEl) {
+            specialEl.value = headerDatum.special || '';
+            // apply fillColumn visual if special exists
+            if (specialEl.value) {
+              fillColumn(specialEl, idx + 1, tid);
+            }
+          }
+        });
+
+        // load rows
         const tbody = table.querySelector('tbody');
-        const rows = Array.from(tbody.querySelectorAll('tr')).map(tr=>{
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.forEach((tr, rIdx) => {
+          const tds = Array.from(tr.querySelectorAll('td')).slice(1);
+          tds.forEach((td, cIdx) => {
+            const sel = td.querySelector('select');
+            const cellDatum = (data.rows && data.rows[rIdx] && data.rows[rIdx][cIdx]) || {};
+            if (sel) {
+              sel.value = cellDatum.value || '';
+              sel.className = colors[sel.value] || '';
+            }
+            td.className = cellDatum.tdClass || (sel && sel.value === 'Vägg' ? 'vagg' : '');
+          });
+        });
+      });
+    }
+
+    // Handlers for server endpoints
+    async function saveToServer(date) {
+      const payload = buildPayloadForCurrentDate(date);
+      const res = await fetch('/api/save-schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date, payload })
+      });
+      return res.json();
+    }
+
+    async function loadFromServer(date) {
+      const res = await fetch('/api/load-schedule?date=' + encodeURIComponent(date));
+      if (!res.ok) throw new Error('Kunde inte ladda från server');
+      const data = await res.json();
+      return data.payload;
+    }
+
+    function buildPayloadForCurrentDate(dateInput) {
+      const payload = { date: dateInput, tables: {} };
+      ['schedule1', 'schedule2'].forEach(tid => {
+        const table = document.getElementById(tid);
+        if (!table) return;
+        const header = table.querySelector('thead tr');
+        const headerCells = Array.from(header.querySelectorAll('th')).slice(1);
+        const headersData = headerCells.map(h => ({
+          comment: (h.querySelector('[data-header-comment]') ? h.querySelector('[data-header-comment]').value : ''),
+          selectedName: (h.querySelector('[data-header-name]') ? h.querySelector('[data-header-name]').value : ''),
+          nameLabel: (h.querySelector('.name-label') ? h.querySelector('.name-label').textContent : ''),
+          special: (h.querySelector('[data-header-special]') ? h.querySelector('[data-header-special]').value : '')
+        }));
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr')).map(tr => {
           const rowCells = Array.from(tr.querySelectorAll('td')).slice(1);
-          return rowCells.map(td=>{const sel=td.querySelector('select');return{value:sel?sel.value:'',className:sel?sel.className:'',tdClass:td.className||''};});
+          return rowCells.map(td => {
+            const sel = td.querySelector('select');
+            return {
+              value: sel ? sel.value : '',
+              className: sel ? sel.className : '',
+              tdClass: td.className || ''
+            };
+          });
         });
         payload.tables[tid] = { headers: headersData, rows };
       });
       return payload;
     }
 
-    function applyPayloadToTables(payload){
-      if(!payload) return;
-      ['schedule1','schedule2'].forEach(tid=>{
-        const table = document.getElementById(tid);
-        const data = payload.tables && payload.tables[tid];
-        if(!table||!data) return;
-        const header = table.querySelector('thead tr');
-        const headerCells = Array.from(header.querySelectorAll('th')).slice(1);
-        headerCells.forEach((h,idx)=>{
-          const commentEl=h.querySelector('[data-header-comment]');
-          const nameEl=h.querySelector('[data-header-name]');
-          const labelEl=h.querySelector('.name-label');
-          const specialEl=h.querySelector('[data-header-special]');
-          const headerDatum=data.headers[idx]||{};
-          if(commentEl) commentEl.value = headerDatum.comment||'';
-          if(nameEl){nameEl.value = headerDatum.selectedName||''; if(labelEl) labelEl.textContent = headerDatum.nameLabel || (nameEl.value||'Ingen vald');}
-          if(specialEl){specialEl.value = headerDatum.special||''; if(specialEl.value){ fillColumn(specialEl, idx+1, tid); }}
-        });
-        const tbody = table.querySelector('tbody');
-        const rows = Array.from(tbody.querySelectorAll('tr'));
-        rows.forEach((tr,rIdx)=>{
-          const tds = Array.from(tr.querySelectorAll('td')).slice(1);
-          tds.forEach((td,cIdx)=>{
-            const sel = td.querySelector('select');
-            const cellDatum = (data.rows && data.rows[rIdx] && data.rows[rIdx][cIdx]) || {};
-            if(sel){ sel.value = cellDatum.value || ''; sel.className = colors[sel.value] || ''; }
-            td.className = cellDatum.tdClass || (sel && sel.value === 'Vägg' ? 'vägg' : '');
-          });
-        });
+    // Connect date input
+    const dateEl = document.getElementById('date');
+    dateEl.addEventListener('change', () => {
+      const d = dateEl.value;
+      skapaSchema("schedule1", namesGroup1, "KS-SE");
+      skapaSchema("schedule2", namesGroup2, "AV-C");
+      // try server load first, fallback to local
+      loadFromServer(d).then(payload => {
+        if (payload) {
+          applyPayloadToTables(payload);
+          localStorage.setItem(getStorageKeyForDate(d), JSON.stringify(payload));
+        }
+      }).catch(() => {
+        loadScheduleForDate(d);
       });
-    }
-
-    // Build UI and wire buttons (we will recreate full schema on date change like before)
-    function skapaSchema(tabellId, namnLista, rubrik){ /* full implementation identical to previous commit */
-      // For brevity in this message omitted; actual file contains full implementation
-    }
-    function fillColumn(){ /* omitted here; actual file has full implementation */ }
-
-    // Wire save/load to server endpoints
-    document.addEventListener('DOMContentLoaded', ()=>{
-      skapaSchema('schedule1', namesGroup1, 'KS-SE');
-      skapaSchema('schedule2', namesGroup2, 'AV-C');
-      const today = new Date().toISOString().slice(0,10);
-      const dateEl = document.getElementById('date');
-      dateEl.value = today;
-
-      document.getElementById('saveServerBtn').addEventListener('click', async ()=>{
-        const date = dateEl.value;
-        if(!date) return alert('Välj ett datum först');
-        const payload = buildPayloadForCurrentDate(date);
-        try{
-          const r = await fetch('/api/save-schedule',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date,payload})});
-          const data = await r.json();
-          if(!r.ok) throw new Error(data.error||'Okänt fel');
-          // also save locally
-          localStorage.setItem('bimj_schedule_'+date, JSON.stringify({date, tables: payload.tables}));
-          alert('Sparat på server/repo: ' + (data.path||'OK'));
-        }catch(e){console.error(e);alert('Kunde inte spara: ' + e.message);}      
-      });
-
-      document.getElementById('loadServerBtn').addEventListener('click', async ()=>{
-        const date = dateEl.value;
-        if(!date) return alert('Välj ett datum först');
-        try{
-          const r = await fetch('/api/load-schedule?date='+encodeURIComponent(date));
-          const data = await r.json();
-          if(!r.ok) throw new Error(data.error||'Okänt fel');
-          applyPayloadToTables(data.payload);
-          localStorage.setItem('bimj_schedule_'+date, JSON.stringify(data.payload));
-          alert('Laddat schema från server för ' + date);
-        }catch(e){console.error(e);alert('Kunde inte ladda: ' + e.message);}      
-      });
-
-      document.getElementById('clearDateBtn').addEventListener('click', ()=>{
-        const d = dateEl.value;
-        if(!d){ alert('Välj ett datum först.'); return; }
-        if(!confirm('Radera det lokala schemat för ' + d + '?')) return;
-        localStorage.removeItem('bimj_schedule_' + d);
-        skapaSchema('schedule1', namesGroup1, 'KS-SE');
-        skapaSchema('schedule2', namesGroup2, 'AV-C');
-        alert('Lokalt schema raderat för ' + d);
-      });
-
-      // load local if exists
-      const raw = localStorage.getItem('bimj_schedule_'+today);
-      if(raw){ try{ const p = JSON.parse(raw); applyPayloadToTables(p); }catch(e){} }
-
     });
 
+    document.getElementById('saveServerBtn').addEventListener('click', async () => {
+      const date = dateEl.value;
+      if (!date) return alert('Välj ett datum först');
+      try {
+        const result = await saveToServer(date);
+        if (result && result.ok) {
+          // also keep local copy
+          const payload = buildPayloadForCurrentDate(date);
+          localStorage.setItem(getStorageKeyForDate(date), JSON.stringify(payload));
+          alert('Sparat på server/repo: ' + (result.path || 'OK'));
+        } else {
+          throw new Error(result && result.error ? result.error : 'Okänt fel');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Kunde inte spara till server: ' + e.message);
+      }
+    });
+
+    document.getElementById('loadServerBtn').addEventListener('click', async () => {
+      const date = dateEl.value;
+      if (!date) return alert('Välj ett datum först');
+      try {
+        const payload = await loadFromServer(date);
+        if (payload) {
+          applyPayloadToTables(payload);
+          localStorage.setItem(getStorageKeyForDate(date), JSON.stringify(payload));
+          alert('Laddat schema från server för ' + date);
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Kunde inte ladda från server: ' + e.message);
+      }
+    });
+
+    document.getElementById('clearDateBtn').addEventListener('click', () => {
+      const d = dateEl.value;
+      if (!d) {
+        alert('Välj ett datum först.');
+        return;
+      }
+      if (!confirm('Radera det lokala schemat för ' + d + '?')) return;
+      localStorage.removeItem(getStorageKeyForDate(d));
+      skapaSchema("schedule1", namesGroup1, "KS-SE");
+      skapaSchema("schedule2", namesGroup2, "AV-C");
+      alert('Lokalt schema raderat för ' + d);
+    });
+
+    // Spara även när fönstret lämnas
+    window.addEventListener('beforeunload', saveCurrentSchedule);
+
+    // Bygg tabeller och ladda dagens datum
+    skapaSchema("schedule1", namesGroup1, "KS-SE");
+    skapaSchema("schedule2", namesGroup2, "AV-C");
+
+    const today = new Date().toISOString().slice(0,10);
+    dateEl.value = today;
+
+    // try server load then local
+    loadFromServer(today).then(p => { if (p) applyPayloadToTables(p); }).catch(()=>{ loadScheduleForDate(today); });
+
+    // Koppla globala lyssnare för ändringar i body selects (om skapade senare)
+    document.body.addEventListener('change', (e) => {
+      const target = e.target;
+      if (target && (target.tagName === 'SELECT' || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        scheduleSave();
+      }
+    });
+
+    // Citat - kör som tidigare (OBS: detta använder public JSON i repo; uppdatera URL vid behov)
+    const citatUrl = "https://raw.githubusercontent.com/BimJ/BimJ.github.io/main/roliga_citat.json";
+    let citatLista = [];
+
+    function hamtaCitat() {
+      fetch(citatUrl)
+        .then(response => {
+          if (!response.ok) throw new Error("Nätverksfel");
+          return response.json();
+        })
+        .then(data => {
+          citatLista = data;
+          visaNyttCitat();
+        })
+        .catch(error => {
+          console.error("Kunde inte hämta citat:", error);
+          document.getElementById("citat").textContent = "Kunde inte ladda citat.";
+        });
+    }
+
+    function visaNyttCitat() {
+      if (citatLista.length > 0) {
+        const slumpCitat = citatLista[Math.floor(Math.random() * citatLista.length)];
+        document.getElementById("citat").textContent = `"${slumpCitat}"`;
+      }
+    }
+
+    hamtaCitat();
   </script>
 </body>
 </html>
