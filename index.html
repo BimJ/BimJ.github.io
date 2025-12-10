@@ -1,42 +1,51 @@
 <!doctype html>
-<html>
+<html lang="sv">
 <head>
   <meta charset="utf-8">
-  <title>Sparade scheman</title>
-  <style>body{font-family:Arial,Helvetica,sans-serif;padding:20px}</style>
+  <title>BimJ — Startsida</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;max-width:900px;margin:40px auto;padding:0 16px;color:#222}
+    header{display:flex;align-items:center;gap:12px}
+    img.logo{width:56px;height:auto;border-radius:6px}
+    h1{margin:0}
+    nav{margin-top:18px;margin-bottom:28px}
+    .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .card{padding:12px;border:1px solid #eee;border-radius:8px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+    a.btn{display:inline-block;padding:8px 12px;background:#1e88e5;color:white;text-decoration:none;border-radius:6px}
+    footer{margin-top:36px;color:#666;font-size:14px}
+  </style>
 </head>
 <body>
-  <h1>Sparade scheman</h1>
-  <div id="list">Laddar...</div>
-  <script>
-    async function loadList() {
-      const el = document.getElementById('list');
-      try {
-        const res = await fetch('/api/list-schedules');
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Fel');
-        if (!data.files || data.files.length === 0) {
-          el.innerText = 'Inga sparade scheman';
-          return;
-        }
-        const ul = document.createElement('ul');
-        data.files.forEach(f => {
-          const li = document.createElement('li');
-          const a = document.createElement('a');
-          // Link to raw file in repo via GitHub raw URL
-          a.href = f.download_url || `/data/schedules/${f.name}`;
-          a.textContent = f.name + (f.date ? ' (' + f.date + ')' : '');
-          a.target = '_blank';
-          li.appendChild(a);
-          ul.appendChild(li);
-        });
-        el.innerHTML = '';
-        el.appendChild(ul);
-      } catch (err) {
-        el.innerText = 'Fel: ' + err.message;
-      }
-    }
-    loadList();
-  </script>
+  <header>
+    <img class="logo" src="/SchemaBanner.jpg" alt="BimJ" onerror="this.style.display='none'"/>
+    <div>
+      <h1>BimJ</h1>
+      <div>Välkommen — här hittar du mina projekt och verktyg</div>
+    </div>
+  </header>
+
+  <nav>
+    <a class="btn" href="/schema.html">Öppna Schema</a>
+  </nav>
+
+  <section>
+    <h2>Projekt</h2>
+    <p>Här listas dina projekt. Klicka på ett projekt för att öppna det.</p>
+    <div class="projects" id="projects">
+      <div class="card">
+        <strong>Schema</strong>
+        <div style="margin-top:8px">Schemat man kan spara till GitHub.</div>
+        <div style="margin-top:10px"><a href="/schema.html">Öppna schema →</a></div>
+      </div>
+
+      <!-- Fler kort för framtida projekt kan läggas till här -->
+    </div>
+  </section>
+
+  <footer>
+    <div>© <strong>BimJ</strong></div>
+    <div style="margin-top:8px">Notera: För att Spara i schemat krävs att serverless‑funktionen är deployad och att environment variables (GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO) är konfigurerade i Vercel.</div>
+  </footer>
 </body>
 </html>
