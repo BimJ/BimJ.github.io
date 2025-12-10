@@ -1,106 +1,42 @@
-<!DOCTYPE html>
-<html lang="sv">
+<!doctype html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Projektportalen</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #6BABCC;
-    }
-
-    /* Meny överst */
-    .navbar {
-      background-color: #ffffff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-
-    .navbar h1 {
-      margin: 0;
-      font-size: 1.5em;
-      color: #333;
-    }
-
-    .navbar a {
-      margin-left: 15px;
-      text-decoration: none;
-      color: #007BFF;
-      font-weight: bold;
-    }
-
-    .navbar a:hover {
-      text-decoration: underline;
-    }
-
-    /* Bannerbild som liten och centrerad, kan ändras */
-    .banner-container {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .banner-container img {
-      width: 1000px; /* Justera storlek här */
-      height: auto;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-    /* Innehåll */
-    .content {
-      padding: 20px;
-      text-align: center;
-    }
-
-    .content a {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      background-color: white;
-      color: #333;
-      text-decoration: none;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    .content a:hover {
-      background-color: #e0e0e0;
-    }
-  </style>
+  <meta charset="utf-8">
+  <title>Sparade scheman</title>
+  <style>body{font-family:Arial,Helvetica,sans-serif;padding:20px}</style>
 </head>
 <body>
-
-  <!-- Meny -->
-  <div class="navbar">
-    <h1>Projektportalen</h1>
-    <div>
-      <a href="schema.html">📅 Skapa Schema</a>
-      <a href="schema_BF-Edition.html">🖤 Black Friday 🖤</a>
-      <a href="#">📁 Projekt map (Tom)</a>
-      <a href="#">📊 Statistik (Tom)</a>
-    </div>
-  </div>
-
-  <!-- Bannerbild som liten och centrerad -->
-  <div class="banner-container">
-    <img src="banner.jpg" alt="Projektportalen Banner">
-    <!-- Byt ut 'banner.jpg' mot din faktiska bild eller URL -->
-  </div>
-
-  <!-- Innehåll -->
-  <div class="content">
-    <h2>Välj ett projekt nedan</h2>
-    <a href="schema.html">📅 Skapa Schema</a>
-    <!-- Lägg till fler projektlänkar här -->
-  </div>
-
+  <h1>Sparade scheman</h1>
+  <div id="list">Laddar...</div>
+  <script>
+    async function loadList() {
+      const el = document.getElementById('list');
+      try {
+        const res = await fetch('/api/list-schedules');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Fel');
+        if (!data.files || data.files.length === 0) {
+          el.innerText = 'Inga sparade scheman';
+          return;
+        }
+        const ul = document.createElement('ul');
+        data.files.forEach(f => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          // Link to raw file in repo via GitHub raw URL
+          a.href = f.download_url || `/data/schedules/${f.name}`;
+          a.textContent = f.name + (f.date ? ' (' + f.date + ')' : '');
+          a.target = '_blank';
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+        el.innerHTML = '';
+        el.appendChild(ul);
+      } catch (err) {
+        el.innerText = 'Fel: ' + err.message;
+      }
+    }
+    loadList();
+  </script>
 </body>
 </html>
