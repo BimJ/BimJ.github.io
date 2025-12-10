@@ -7,14 +7,40 @@
   <style>
     body{font-family:Arial,Helvetica,sans-serif;max-width:900px;margin:40px auto;padding:0 16px;color:#222}
     header{display:flex;align-items:center;gap:12px}
-    img.logo{width:56px;height:auto;border-radius:6px}
     h1{margin:0}
     nav{margin-top:18px;margin-bottom:28px}
     .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-    .card{padding:12px;border:1px solid #eee;border-radius:8px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+    /* Bild till höger: använd row-reverse så bilden placeras efter texten i dokumentflödet,
+       men visas visuellt till höger. På små skärmar staplas kortet vertikalt. */
+    .card{
+      display:flex;
+      flex-direction:row-reverse;
+      gap:12px;
+      align-items:center;
+      padding:12px;
+      border:1px solid #eee;
+      border-radius:8px;
+      background:#fff;
+      box-shadow:0 1px 4px rgba(0,0,0,0.03);
+    }
+    .card img {
+      width:80px;
+      height:auto;
+      border-radius:6px;
+      flex-shrink:0;
+    }
+    .card-body { display:flex; flex-direction:column; }
+    .card-body strong { font-size:1.05rem; }
+    .card-body .desc { margin-top:6px; color:#333; }
+    .card-body .action { margin-top:8px; }
     a.btn{display:inline-block;padding:8px 12px;background:#1e88e5;color:white;text-decoration:none;border-radius:6px}
     footer{margin-top:36px;color:#666;font-size:14px}
-    .card img { display:block; max-width:100%; height:auto; margin-bottom:8px; border-radius:6px; }
+
+    /* Responsiv: stapla vertikalt på smalare skärmar (bilden under eller ovan beroende på önskad ordning) */
+    @media (max-width:480px) {
+      .card{flex-direction:column;align-items:flex-start}
+      .card img{width:100%;max-width:260px}
+    }
   </style>
 </head>
 <body>
@@ -34,11 +60,13 @@
     <p>Här listas dina projekt. Klicka på ett projekt för att öppna det.</p>
     <div class="projects" id="projects">
       <div class="card">
-        <!-- Bild flyttad hit -->
+        <!-- Bild ligger visuellt till höger tack vare row-reverse -->
         <img src="/SchemaBanner.jpg" alt="Schema" onerror="this.style.display='none'"/>
-        <strong>Schema</strong>
-        <div style="margin-top:8px">Schemathar nu litet minne</div>
-        <div style="margin-top:10px"><a href="/schema.html">Öppna schema →</a></div>
+        <div class="card-body">
+          <strong>Schema</strong>
+          <div class="desc">Schemathar nu litet minne</div>
+          <div class="action"><a href="/schema.html">Öppna schema →</a></div>
+        </div>
       </div>
 
       <!-- Fler kort för framtida projekt kan läggas till här -->
