@@ -63,7 +63,7 @@
     .sjuk, .vab { background-color: #ef9a9a; color: black; }
     .vägg { background-color: #9e9e9e; color: white; }
 
-    select, input[type="text"], input[type="date"] {
+    select, input[type="text"], input[type="date"], input[type="password"] {
       width: 100%;
       padding: 5px;
       font-size: 14px;
@@ -80,15 +80,60 @@
       display: block;
       margin-top: 4px;
     }
+    .controls-row {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .btn {
+      padding: 6px 10px;
+      margin-left: 6px;
+      font-size: 14px;
+    }
+
+    .github-box {
+      max-width: 600px;
+      margin: 10px auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 6px;
+      background: #f9f9f9;
+    }
   </style>
 </head>
 <body>
-  <body>
   <div style="text-align: center;">
-  <img src="SchemaBanner.jpg" alt="Schema" style="max-width: 10%; height: auto
+    <img src="SchemaBanner.jpg" alt="Schema" style="max-width: 10%; height: auto;" />
+  </div>
 
   <div class="date-wrapper">
     <input type="date" id="date" class="date-input" />
+    <div class="controls-row">
+      <button id="clearDateBtn" class="btn">Radera sparat schema för detta datum</button>
+    </div>
+  </div>
+
+  <div class="github-box">
+    <strong>Spara / Ladda från GitHub</strong>
+    <div style="display:flex; gap:8px; margin-top:8px;">
+      <div style="flex:1;">
+        <label>Owner</label>
+        <input id="githubOwner" type="text" value="BimJ" />
+      </div>
+      <div style="flex:1;">
+        <label>Repo</label>
+        <input id="githubRepo" type="text" value="BimJ.github.io" />
+      </div>
+      <div style="flex:1;">
+        <label>Branch</label>
+        <input id="githubBranch" type="text" value="main" />
+      </div>
+    </div>
+    <div style="margin-top:8px; display:flex; gap:8px;">
+      <input id="githubToken" type="password" placeholder="GitHub Personal Access Token (repo scope)" />
+      <button id="saveGitHubBtn" class="btn">Spara till GitHub</button>
+      <button id="loadGitHubBtn" class="btn">Ladda från GitHub</button>
+    </div>
+    <div style="margin-top:8px; font-size:12px; color:#666;">Notera: Token behöver "repo"-rättighet för privata repo; för public repo räcker ofta public access. Token sparas inte i servern — den används endast i din session.</div>
   </div>
 
   <div class="schema-wrapper">
@@ -128,16 +173,24 @@
       "Admin": "admin",
       "Lunch": "lunch",
       "Meta & Trust": "meta",
-      "Admin-Företag": "företag",
+      "Admin-Företag": "foretag",
       "Semester": "semester",
-      "Möte": "möte",
+      "Möte": "mote",
       "Vab": "vab",
       "Sjuk": "sjuk",
       "Vägg": "vägg"
     };
 
+    // Debounce for save
+    let saveTimeout = null;
+    function scheduleSave() {
+      if (saveTimeout) clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(saveCurrentSchedule, 400);
+    }
+
     function skapaSchema(tabellId, namnLista, rubrik) {
       const table = document.getElementById(tabellId);
+      table.innerHTML = ""; // töm tidigare innehåll
       const thead = document.createElement("thead");
       const headerRow = document.createElement("tr");
 
@@ -148,13 +201,13 @@
       namnLista.forEach((namn, index) => {
         const th = document.createElement("th");
         th.innerHTML = `
-          <input type="text" placeholder="Kommentar..." />
-          <select onchange="updateNameLabel(this)">
+          <input type="text" placeholder="Kommentar..." data-header-comment />
+          <select data-header-name onchange="updateNameLabelInline(this)">
             <option value="">Välj namn</option>
             ${namnLista.map(n => `<option value="${n}">${n}</option>`).join('')}
           </select>
           <span class="name-label">Ingen vald</span>
-          <select onchange="fillColumn(this, ${index + 1}, '${tabellId}')">
+          <select data-header-special onchange="fillColumn(this, ${index + 1}, '${tabellId}')">
             <option value=""> </option>
             <option value="Semester">🌻 Semester</option>
             <option value="Vab">👶 Vab</option>
@@ -178,16 +231,28 @@
         for (let i = 0; i < namnLista.length; i++) {
           const cell = document.createElement("td");
           const select = document.createElement("select");
+          select.dataset.row = hour - 8;
+          select.dataset.col = i;
+          select.dataset.table = tabellId;
 
           tasks.forEach(task => {
             const option = document.createElement("option");
             option.value = task.label;
-            option.textContent = task.icon + " " + task.label;
+            option.textContent = task.icon + (task.label ? " " + task.label : "");
             select.appendChild(option);
           });
 
           select.addEventListener("change", () => {
             select.className = colors[select.value] || "";
+            // markera cellens td om vägg
+            if (select.value === "Vägg") {
+              select.parentElement.className = "vägg";
+            } else {
+              if (select.parentElement.className === "vägg") {
+                select.parentElement.className = "";
+              }
+            }
+            scheduleSave();
           });
 
           cell.appendChild(select);
@@ -198,6 +263,17 @@
       }
 
       table.appendChild(tbody);
+
+      // Koppla lyssnare på header inputs/selects för autosave
+      const headerComments = table.querySelectorAll('[data-header-comment]');
+      headerComments.forEach(i => i.addEventListener('input', scheduleSave));
+      const headerNames = table.querySelectorAll('[data-header-name]');
+      headerNames.forEach(s => s.addEventListener('change', (e) => {
+        updateNameLabelInline(e.target);
+        scheduleSave();
+      }));
+      const headerSpecials = table.querySelectorAll('[data-header-special]');
+      headerSpecials.forEach(s => s.addEventListener('change', scheduleSave));
     }
 
     function fillColumn(dropdown, colIndex, tabellId) {
@@ -208,27 +284,316 @@
       selects.forEach(select => {
         select.value = value;
         select.className = colors[value] || "";
-
         if (value === "Vägg") {
           select.parentElement.className = "vägg";
         } else {
           select.parentElement.className = "";
         }
       });
+      scheduleSave();
     }
 
-    function updateNameLabel(select) {
+    function updateNameLabelInline(select) {
       const label = select.parentElement.querySelector(".name-label");
       label.textContent = select.value || "Ingen vald";
     }
 
+    function getStorageKeyForDate(dateStr) {
+      return 'bimj_schedule_' + dateStr;
+    }
+
+    function saveCurrentSchedule() {
+      const dateInput = document.getElementById('date').value;
+      if (!dateInput) return; // inget datum valt, spara inte
+
+      const payload = { date: dateInput, tables: {} };
+
+      ['schedule1', 'schedule2'].forEach(tid => {
+        const table = document.getElementById(tid);
+        if (!table) return;
+        const header = table.querySelector('thead tr');
+        const headerCells = Array.from(header.querySelectorAll('th')).slice(1); // hoppa över tid-kolumnen
+        const headersData = headerCells.map(h => {
+          return {
+            comment: (h.querySelector('[data-header-comment]') ? h.querySelector('[data-header-comment]').value : ''),
+            selectedName: (h.querySelector('[data-header-name]') ? h.querySelector('[data-header-name]').value : ''),
+            nameLabel: (h.querySelector('.name-label') ? h.querySelector('.name-label').textContent : ''),
+            special: (h.querySelector('[data-header-special]') ? h.querySelector('[data-header-special]').value : '')
+          };
+        });
+
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr')).map(tr => {
+          const rowCells = Array.from(tr.querySelectorAll('td')).slice(1); // hoppa tid
+          return rowCells.map(td => {
+            const sel = td.querySelector('select');
+            return {
+              value: sel ? sel.value : '',
+              className: sel ? sel.className : '',
+              tdClass: td.className || ''
+            };
+          });
+        });
+
+        payload.tables[tid] = { headers: headersData, rows: rows };
+      });
+
+      try {
+        const key = getStorageKeyForDate(dateInput);
+        localStorage.setItem(key, JSON.stringify(payload));
+        // console.log('Schema sparat för', dateInput);
+      } catch (e) {
+        console.error('Kunde inte spara schema:', e);
+      }
+    }
+
+    function loadScheduleForDate(dateInput) {
+      if (!dateInput) return;
+      const key = getStorageKeyForDate(dateInput);
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        try {
+          const payload = JSON.parse(raw);
+          applyPayloadToTables(payload);
+        } catch (e) {
+          console.error('Kunde inte läsa sparad data från localStorage:', e);
+        }
+      }
+    }
+
+    function applyPayloadToTables(payload) {
+      if (!payload) return;
+      ['schedule1', 'schedule2'].forEach(tid => {
+        const table = document.getElementById(tid);
+        const data = payload.tables && payload.tables[tid];
+        if (!table || !data) return;
+
+        // load headers
+        const header = table.querySelector('thead tr');
+        const headerCells = Array.from(header.querySelectorAll('th')).slice(1);
+        headerCells.forEach((h, idx) => {
+          const commentEl = h.querySelector('[data-header-comment]');
+          const nameEl = h.querySelector('[data-header-name]');
+          const labelEl = h.querySelector('.name-label');
+          const specialEl = h.querySelector('[data-header-special]');
+
+          const headerDatum = data.headers[idx] || {};
+          if (commentEl) commentEl.value = headerDatum.comment || '';
+          if (nameEl) {
+            nameEl.value = headerDatum.selectedName || '';
+            if (labelEl) labelEl.textContent = headerDatum.nameLabel || (nameEl.value || 'Ingen vald');
+          }
+          if (specialEl) {
+            specialEl.value = headerDatum.special || '';
+            if (specialEl.value) {
+              fillColumn(specialEl, idx + 1, tid);
+            }
+          }
+        });
+
+        // load rows
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.forEach((tr, rIdx) => {
+          const tds = Array.from(tr.querySelectorAll('td')).slice(1);
+          tds.forEach((td, cIdx) => {
+            const sel = td.querySelector('select');
+            const cellDatum = (data.rows && data.rows[rIdx] && data.rows[rIdx][cIdx]) || {};
+            if (sel) {
+              sel.value = cellDatum.value || '';
+              sel.className = colors[sel.value] || '';
+            }
+            td.className = cellDatum.tdClass || (sel && sel.value === 'Vägg' ? 'vägg' : '');
+          });
+        });
+      });
+    }
+
+    // Rensa det sparade schemat för valt datum
+    function clearSavedForDate(dateStr) {
+      if (!dateStr) return;
+      const key = getStorageKeyForDate(dateStr);
+      localStorage.removeItem(key);
+    }
+
+    // GitHub helpers
+    function base64EncodeUnicode(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+    function base64DecodeUnicode(str) {
+      return decodeURIComponent(escape(atob(str)));
+    }
+
+    async function getFileShaIfExists(owner, repo, path, branch, token) {
+      const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`;
+      const headers = { Accept: 'application/vnd.github.v3+json' };
+      if (token) headers.Authorization = 'token ' + token;
+      const res = await fetch(url, { headers });
+      if (res.status === 200) {
+        const data = await res.json();
+        return data.sha;
+      }
+      return null;
+    }
+
+    async function savePayloadToGitHub(payload, owner, repo, branch, token) {
+      if (!payload || !payload.date) throw new Error('Payload saknar datum');
+      const path = `schedules/${payload.date}.json`;
+      const content = JSON.stringify(payload, null, 2);
+      const encoded = base64EncodeUnicode(content);
+
+      const sha = await getFileShaIfExists(owner, repo, path, branch, token);
+      const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
+      const body = { message: `Uppdatera schema ${payload.date}`, content: encoded, branch };
+      if (sha) body.sha = sha;
+
+      const headers = { Accept: 'application/vnd.github.v3+json' };
+      if (token) headers.Authorization = 'token ' + token;
+
+      const res = await fetch(url, { method: 'PUT', headers, body: JSON.stringify(body) });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error('GitHub API fel: ' + res.status + ' ' + text);
+      }
+      return await res.json();
+    }
+
+    async function loadPayloadFromGitHub(dateStr, owner, repo, branch, token) {
+      const path = `schedules/${dateStr}.json`;
+      const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`;
+      const headers = { Accept: 'application/vnd.github.v3+json' };
+      if (token) headers.Authorization = 'token ' + token;
+      const res = await fetch(url, { headers });
+      if (res.status === 200) {
+        const data = await res.json();
+        const decoded = base64DecodeUnicode(data.content.replace(/\n/g, ''));
+        return JSON.parse(decoded);
+      }
+      if (res.status === 404) {
+        return null;
+      }
+      const text = await res.text();
+      throw new Error('GitHub API fel: ' + res.status + ' ' + text);
+    }
+
+    // Handlers for buttons
+    document.getElementById('saveGitHubBtn').addEventListener('click', async () => {
+      const token = document.getElementById('githubToken').value.trim();
+      const owner = document.getElementById('githubOwner').value.trim();
+      const repo = document.getElementById('githubRepo').value.trim();
+      const branch = document.getElementById('githubBranch').value.trim();
+      const date = document.getElementById('date').value;
+      if (!date) return alert('Välj ett datum först');
+      // build payload from current UI
+      const payload = buildPayloadForCurrentDate(date);
+      try {
+        const res = await savePayloadToGitHub(payload, owner, repo, branch, token);
+        alert('Sparat till GitHub: ' + (res.content && res.content.path ? res.content.path : 'OK'));
+      } catch (e) {
+        console.error(e);
+        alert('Kunde inte spara till GitHub: ' + e.message);
+      }
+    });
+
+    document.getElementById('loadGitHubBtn').addEventListener('click', async () => {
+      const token = document.getElementById('githubToken').value.trim();
+      const owner = document.getElementById('githubOwner').value.trim();
+      const repo = document.getElementById('githubRepo').value.trim();
+      const branch = document.getElementById('githubBranch').value.trim();
+      const date = document.getElementById('date').value;
+      if (!date) return alert('Välj ett datum först');
+      try {
+        const payload = await loadPayloadFromGitHub(date, owner, repo, branch, token);
+        if (!payload) {
+          alert('Ingen sparad fil för detta datum i repo.');
+          return;
+        }
+        // apply and also save to localStorage
+        applyPayloadToTables(payload);
+        localStorage.setItem(getStorageKeyForDate(date), JSON.stringify(payload));
+        alert('Laddat schema från GitHub för ' + date);
+      } catch (e) {
+        console.error(e);
+        alert('Kunde inte ladda från GitHub: ' + e.message);
+      }
+    });
+
+    function buildPayloadForCurrentDate(dateInput) {
+      const payload = { date: dateInput, tables: {} };
+      ['schedule1', 'schedule2'].forEach(tid => {
+        const table = document.getElementById(tid);
+        if (!table) return;
+        const header = table.querySelector('thead tr');
+        const headerCells = Array.from(header.querySelectorAll('th')).slice(1);
+        const headersData = headerCells.map(h => ({
+          comment: (h.querySelector('[data-header-comment]') ? h.querySelector('[data-header-comment]').value : ''),
+          selectedName: (h.querySelector('[data-header-name]') ? h.querySelector('[data-header-name]').value : ''),
+          nameLabel: (h.querySelector('.name-label') ? h.querySelector('.name-label').textContent : ''),
+          special: (h.querySelector('[data-header-special]') ? h.querySelector('[data-header-special]').value : '')
+        }));
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr')).map(tr => {
+          const rowCells = Array.from(tr.querySelectorAll('td')).slice(1);
+          return rowCells.map(td => {
+            const sel = td.querySelector('select');
+            return {
+              value: sel ? sel.value : '',
+              className: sel ? sel.className : '',
+              tdClass: td.className || ''
+            };
+          });
+        });
+        payload.tables[tid] = { headers: headersData, rows };
+      });
+      return payload;
+    }
+
+    // Connect date input
+    const dateEl = document.getElementById('date');
+    dateEl.addEventListener('change', () => {
+      const d = dateEl.value;
+      skapaSchema("schedule1", namesGroup1, "KS-SE");
+      skapaSchema("schedule2", namesGroup2, "AV-C");
+      loadScheduleForDate(d);
+    });
+
+    document.getElementById('clearDateBtn').addEventListener('click', () => {
+      const d = dateEl.value;
+      if (!d) {
+        alert('Välj ett datum först.');
+        return;
+      }
+      if (!confirm('Radera det sparade schemat för ' + d + '?')) return;
+      clearSavedForDate(d);
+      skapaSchema("schedule1", namesGroup1, "KS-SE");
+      skapaSchema("schedule2", namesGroup2, "AV-C");
+      alert('Sparat schema raderat för ' + d);
+    });
+
+    // Spara även när fönstret lämnas
+    window.addEventListener('beforeunload', saveCurrentSchedule);
+
+    // Bygg tabeller och ladda dagens datum
     skapaSchema("schedule1", namesGroup1, "KS-SE");
     skapaSchema("schedule2", namesGroup2, "AV-C");
 
-    const citatUrl = "https://raw.githubusercontent.com/BimJ/BimJ.github.io/refs/heads/main/roliga_citat.json";
+    const today = new Date().toISOString().slice(0,10);
+    dateEl.value = today;
+    loadScheduleForDate(today);
+
+    // Koppla globala lyssnare för ändringar i body selects (om skapade senare)
+    document.body.addEventListener('change', (e) => {
+      const target = e.target;
+      if (target && (target.tagName === 'SELECT' || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        scheduleSave();
+      }
+    });
+
+    // Citat - kör som tidigare (OBS: detta använder public JSON i repo; uppdatera URL vid behov)
+    const citatUrl = "https://raw.githubusercontent.com/BimJ/BimJ.github.io/main/roliga_citat.json";
     let citatLista = [];
 
-    function hämtaCitat() {
+    function hamtaCitat() {
       fetch(citatUrl)
         .then(response => {
           if (!response.ok) throw new Error("Nätverksfel");
@@ -251,7 +616,7 @@
       }
     }
 
-    hämtaCitat();
+    hamtaCitat();
   </script>
 </body>
 </html>
