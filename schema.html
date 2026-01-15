@@ -1,152 +1,196 @@
+
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <title>Kjell & Co Schema</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    h1 { text-align: center; }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 20px;
-      table-layout: fixed;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      text-align: center;
-      padding: 5px;
-      vertical-align: middle;
-    }
-    th {
-      background-color: #1e88e5;
-      color: white;
-      height: 120px;
-    }
-    td:first-child {
-      width: 80px;
-      font-weight: bold;
-    }
-    .möte { ackground-color: #ff0000; color: black; }
-    .chat { background-color: #fdd835; color: black; }
-    .phone { background-color: #43a047; color: white; }
-    .admin, .meta { background-color: #1e88e5; color: white; }
-    .lunch { background-color: #ffe0b2; color: black; }
-    .semester { background-color: #90caf9; color: black; }
-    .sjuk { background-color: #ef9a9a; color: black; }
-    select, input[type="text"] {
-      width: 100%;
-      padding: 5px;
-      font-size: 14px;
-      box-sizing: border-box;
-      margin-bottom: 4px;
-    }
-    .name-label {
-      font-weight: bold;
-      display: block;
-      margin-top: 4px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Dynamiskt Schema</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; display: flex; gap: 30px; }
+  h1 { text-align: center; }
+  table { border-collapse: collapse; width: 100%; margin-top: 20px; table-layout: fixed; }
+  th, td { border: 1px solid #ccc; text-align: center; padding: 5px; vertical-align: middle; }
+  th { background-color: #1e88e5; color: white; height: 80px; }
+  td:first-child { width: 80px; font-weight: bold; }
+  #settings { width: 250px; border: 1px solid #ccc; padding: 15px; border-radius: 8px; background: #f9f9f9; }
+  .color-box { width: 16px; height: 16px; display: inline-block; margin-right: 8px; border: 1px solid #333; }
+  .remove-btn { background: red; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; }
+  .remove-btn:hover { background: darkred; }
+  .dropdown { position: relative; width: 100%; cursor: pointer; }
+  .dropdown-selected { border: 1px solid #ccc; padding: 5px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fff; }
+  .dropdown-options { position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #ccc; z-index: 10; display: none; max-height: 150px; overflow-y: auto; }
+  .dropdown-option { padding: 5px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .dropdown-option:hover { background: #eee; }
+</style>
 </head>
 <body>
-  <h1>Kjell & Co Schema</h1>
+<div style="flex: 1;">
+  <h1>Dynamiskt Schema</h1>
   <table id="schedule">
-    <thead>
-      <tr>
-        <script>
-          const names = ["Bim", "Rasmus", "Oliver", "Dennis", "Hampus", "Emil", "August", "Jennifer", "Huy", "Melanie", "Extra"];
-          document.write('<th>Tid</th>');
-          names.forEach((_, index) => {
-            document.write(`
-              <th>
-                <input type="text" placeholder="Kommentar..." />
-                <select onchange="updateNameLabel(this)">
-                  <option value="">Välj namn</option>
-                  ${names.map(n => `<option value="${n}">${n}</option>`).join('')}
-                </select>
-                <span class="name-label">Ingen vald</span>
-                <select onchange="fillColumn(this, ${index + 1})">
-                  <option value=""> </option>
-                  <option value="Semester">🌻 Semester</option>
-                  <option value="Sjuk">🤒 Sjuk</option>
-                </select>
-              </th>
-            `);
-          });
-        </script>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Rader genereras med JavaScript -->
-    </tbody>
+    <thead><tr><th>Tid</th></tr></thead>
+    <tbody></tbody>
   </table>
+</div>
 
-  <script>
-    const tasks = [
-      { label: "", icon: "" },
-      { label: "Möte",icon: ":🗓️" },
-      { label: "Chat", icon: "💬" },
-      { label: "Phone", icon: "📞" },
-      { label: "Admin", icon: "🗂️" },
-      { label: "Lunch", icon: "🍽️" },
-      { label: "Meta & Trust", icon: "🛡️" },
-      { label: "Semester", icon: "🌻" },
-      { label: "Sjuk", icon: "🤒" }
-    ];
-    const colors = {
-      "Möte": "möte",
-      "Chat": "chat",
-      "Phone": "phone",
-      "Admin": "admin",
-      "Lunch": "lunch",
-      "Meta & Trust": "meta",
-      "Semester": "semester",
-      "Sjuk": "sjuk"
-    };
+<div id="settings">
+  <h2>Inställningar</h2>
+  <h3>Lägg till namn</h3>
+  <input type="text" id="newName" placeholder="Skriv namn..." />
+  <button id="addNameBtn">Lägg till namn</button>
+  <ul id="nameList"></ul>
 
-    const tableBody = document.querySelector("#schedule tbody");
+  <h3>Lägg till pass</h3>
+  <input type="text" id="newTask" placeholder="Passnamn..." />
+  <select id="newColor">
+    <option value="#ff0000">Röd</option>
+    <option value="#1e88e5">Blå</option>
+    <option value="#43a047">Grön</option>
+    <option value="#fdd835">Gul</option>
+    <option value="#fb8c00">Orange</option>
+    <option value="#8e24aa">Lila</option>
+  </select>
+  <button id="addTaskBtn">Lägg till pass</button>
+  <ul id="taskList"></ul>
+</div>
 
-    for (let hour = 8; hour < 18; hour++) {
-      const row = document.createElement("tr");
-      const timeCell = document.createElement("td");
-      timeCell.textContent = `${hour.toString().padStart(2, '0')}-${(hour + 1).toString().padStart(2, '0')}`;
-      row.appendChild(timeCell);
+<script>
+let names = [];
+let tasks = [];
+let selectedValues = {};
 
-      for (let i = 0; i < 11; i++) {
-        const cell = document.createElement("td");
-        const select = document.createElement("select");
+const tableHead = document.querySelector("#schedule thead tr");
+const tableBody = document.querySelector("#schedule tbody");
+const nameList = document.getElementById("nameList");
+const taskList = document.getElementById("taskList");
 
-        tasks.forEach(task => {
-          const option = document.createElement("option");
-          option.value = task.label;
-          option.textContent = task.icon + " " + task.label;
-          select.appendChild(option);
-        });
+function saveSelections() {
+  selectedValues = {};
+  tableBody.querySelectorAll("tr").forEach((row, rIndex) => {
+    selectedValues[rIndex] = [];
+    row.querySelectorAll(".dropdown-selected").forEach(selected => {
+      selectedValues[rIndex].push(selected.dataset.value || "");
+    });
+  });
+}
 
-        select.addEventListener("change", () => {
-          select.className = colors[select.value] || "";
-        });
-
-        cell.appendChild(select);
-        row.appendChild(cell);
+function restoreSelections() {
+  tableBody.querySelectorAll("tr").forEach((row, rIndex) => {
+    row.querySelectorAll(".dropdown").forEach((dropdown, cIndex) => {
+      const value = selectedValues[rIndex]?.[cIndex] || "";
+      const selectedDiv = dropdown.querySelector(".dropdown-selected");
+      if (value) {
+        const task = tasks.find(t => t.label === value);
+        if (task) {
+          selectedDiv.innerHTML = `<span class="color-box" style="background:${task.color}"></span>${task.label}`;
+          selectedDiv.dataset.value = task.label;
+        }
       }
+    });
+  });
+}
 
-      tableBody.appendChild(row);
-    }
+function buildRows() {
+  tableBody.innerHTML = "";
+  for (let hour = 8; hour < 18; hour++) {
+    const row = document.createElement("tr");
+    const timeCell = document.createElement("td");
+    timeCell.textContent = `${hour.toString().padStart(2, '0')}-${(hour + 1).toString().padStart(2, '0')}`;
+    row.appendChild(timeCell);
 
-    function fillColumn(dropdown, colIndex) {
-      const value = dropdown.value;
-      const selects = tableBody.querySelectorAll(`tr td:nth-child(${colIndex + 1}) select`);
-      selects.forEach(select => {
-        select.value = value;
-        select.className = colors[value] || "";
+    for (let i = 0; i < names.length; i++) {
+      const cell = document.createElement("td");
+
+      const dropdown = document.createElement("div");
+      dropdown.className = "dropdown";
+
+      const selectedDiv = document.createElement("div");
+      selectedDiv.className = "dropdown-selected";
+      selectedDiv.textContent = "Välj pass";
+      selectedDiv.dataset.value = "";
+
+      const optionsDiv = document.createElement("div");
+      optionsDiv.className = "dropdown-options";
+
+      tasks.forEach(task => {
+        const option = document.createElement("div");
+        option.className = "dropdown-option";
+        option.innerHTML = `<span class="color-box" style="background:${task.color}"></span>${task.label}`;
+        option.addEventListener("click", () => {
+          selectedDiv.innerHTML = `<span class="color-box" style="background:${task.color}"></span>${task.label}`;
+          selectedDiv.dataset.value = task.label;
+          optionsDiv.style.display = "none";
+        });
+        optionsDiv.appendChild(option);
       });
-    }
 
-    function updateNameLabel(select) {
-      const label = select.parentElement.querySelector(".name-label");
-      label.textContent = select.value || "Ingen vald";
+      selectedDiv.addEventListener("click", () => {
+        optionsDiv.style.display = optionsDiv.style.display === "block" ? "none" : "block";
+      });
+
+      dropdown.appendChild(selectedDiv);
+      dropdown.appendChild(optionsDiv);
+      cell.appendChild(dropdown);
+      row.appendChild(cell);
     }
-  </script>
+    tableBody.appendChild(row);
+  }
+}
+
+function rebuildHeader() {
+  saveSelections();
+  tableHead.innerHTML = "<th>Tid</th>";
+  names.forEach(name => {
+    tableHead.innerHTML += `<th>${name}</th>`;
+  });
+  buildRows();
+  restoreSelections();
+}
+
+function updateLists() {
+  nameList.innerHTML = names.map((n, i) => `
+    <li>${n} <button class="remove-btn" onclick="removeName(${i})">Ta bort</button></li>
+  `).join('');
+  taskList.innerHTML = tasks.map((t, i) => `
+    <li><span class="color-box" style="background:${t.color}"></span>${t.label} <button class="remove-btn" onclick="removeTask(${i})">Ta bort</button></li>
+  `).join('');
+}
+
+function addName() {
+  const nameInput = document.getElementById("newName");
+  if (nameInput.value.trim() !== "") {
+    names.push(nameInput.value.trim());
+    nameInput.value = "";
+    rebuildHeader();
+    updateLists();
+  }
+}
+
+function addTask() {
+  const taskInput = document.getElementById("newTask");
+  const colorInput = document.getElementById("newColor");
+  if (taskInput.value.trim() !== "") {
+    tasks.push({ label: taskInput.value.trim(), color: colorInput.value });
+    taskInput.value = "";
+    rebuildHeader();
+    updateLists();
+  }
+}
+
+function removeName(index) {
+  names.splice(index, 1);
+  rebuildHeader();
+  updateLists();
+}
+
+function removeTask(index) {
+  tasks.splice(index, 1);
+  rebuildHeader();
+  updateLists();
+}
+
+document.getElementById("addNameBtn").addEventListener("click", addName);
+document.getElementById("addTaskBtn").addEventListener("click", addTask);
+
+buildRows();
+</script>
 </body>
 </html>
