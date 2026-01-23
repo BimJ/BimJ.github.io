@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistikverktyg - Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --danger: #ef4444;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1400px; /* Lite bredare för att få plats med allt */
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media(min-width: 1000px) {
+            .container {
+                grid-template-columns: 350px 1fr; /* Meny | Grafer */
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h2, h3 { margin-top: 0; color: #111827; font-size: 1.2rem; }
+        h3 { font-size: 1rem; color: #4b5563; margin-bottom: 10px; }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #4b5563;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary { background-color: var(--primary); }
+        .btn-success { background-color: #10b981; }
+        .btn-danger { background-color: var(--danger); width: auto; padding: 5px 10px; font-size: 0.8rem; margin: 0; }
+        
+        button:hover { opacity: 0.9; }
+
+        /* FÄRGVÄLJARE */
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        .color-option:hover { transform: scale(1.1); }
+        .color-option.selected {
+            border: 2px solid #000;
+            box-shadow: 0 0 0 2px white inset;
+            transform: scale(1.1);
+        }
+
+        .metric-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* GRAF-LAYOUT */
+        .chart-wrapper-large {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+        .chart-wrapper-small {
+            position: relative;
+            height: 300px; /* Lite mindre för cirkeln */
+            width: 100%;
+            display: flex; 
+            justify-content: center;
+        }
+
+        .dynamic-fields {
+            padding: 10px;
+            background-color: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
+        th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        th { background-color: #f9fafb; }
+        
+        .summary-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .summary-item { margin-right: 15px; font-weight: bold; display: inline-block; }
+
+        .chart-controls {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div>
+        <div class="card">
+            <h2>1. Skapa Kategori</h2>
+            <p style="font-size: 0.8rem; color: #666;">Vad vill du mäta? (t.ex. Chattar, Sälj)</p>
+            
+            <label>Kategori / Titel</label>
+            <input type="text" id="metricName" placeholder="T.ex. Antal Sälj">
+            
+            <label>Välj färg</label>
+            <div id="colorPalette" class="color-palette"></div>
+            <input type="hidden" id="selectedColor" value="">
+
+            <button class="btn-primary" onclick="addMetricDefinition()">Lägg till Kategori</button>
+            <div id="activeMetricsList" style="margin-top: 10px;"></div>
+        </div>
+
+        <div class="card">
+            <h2>2. Lägg till data</h2>
+            <form id="employeeForm">
+                <label>Anställdas namn</label>
+                <input type="text" id="empName" placeholder="Namn" required>
+                
+                <label>Arbetstimmar</label>
+                <input type="number" id="empHours" placeholder="Timmar" required>
+
+                <div id="dynamicInputs" class="dynamic-fields" style="display:none;">
+                    <h3>Fyll i statistik:</h3>
+                </div>
+
+                <button type="submit" class="btn-success">Lägg till i grafen</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>Tillagd Personal & Totaler</h3>
+            <div id="summaryBox" class="summary-box">Ingen data inlagd ännu.</div>
+            <div style="overflow-x: auto;">
+                <table id="dataTable">
+                    <thead>
+                        <tr id="tableHeader">
+                            <th>Namn</th><th>Timmar</th><th>Radera</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>Totalöversikt</h2>
+                <select id="mainChartType" onchange="updateMainChart()" style="width: auto; margin:0;">
+                    <option value="bar">Stapeldiagram</option>
+                    <option value="line">Linjediagram</option>
+                </select>
+            </div>
+            <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">Jämför alla anställda och all statistik samtidigt.</p>
+            
+            <div class="chart-wrapper-large">
+                <canvas id="mainChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="chart-controls">
+                <div style="flex:1;">
+                    <h2>Fördelning (Cirkeldiagram)</h2>
+                    <p style="font-size:0.8rem; color:#666; margin:0;">Se hur kakan är fördelad mellan personalen.</p>
+                </div>
+            </div>
+            
+            <div class="chart-controls">
+                <div style="flex:1;">
+                    <label>Välj statistik att visa:</label>
+                    <select id="pieMetricSelector" onchange="updateDetailChart()">
+                        <option value="0">Arbetstimmar</option>
+                        </select>
+                </div>
+                <div style="flex:1;">
+                    <label>Typ:</label>
+                    <select id="pieType" onchange="updateDetailChart()">
+                        <option value="doughnut">Ringdiagram</option>
+                        <option value="pie">Cirkeldiagram</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="chart-wrapper-small">
+                <canvas id="detailChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- DATA ---
+    let metricDefinitions = []; 
+    
+    // Grunddata
+    let chartData = {
+        labels: [], 
+        datasets: [
+            {
+                label: 'Arbetstimmar',
+                data: [],
+                backgroundColor: '#9ca3af',
+                borderColor: '#6b7280',
+                borderWidth: 1,
+                yAxisID: 'y', // Vänster axel
+                order: 1
+            }
+        ]
+    };
+
+    // Vi behöver TVÅ diagram-instanser nu
+    let mainChartInstance = null;
+    let detailChartInstance = null;
+
+    // --- FÄRGER ---
+    const presetColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#6366f1', '#84cc16', '#64748b'];
+    
+    // Funktion för att generera palett till cirkeldiagram (per person)
+    function getPiePalette(count) {
+        let palette = [];
+        for (let i = 0; i < count; i++) {
+            palette.push(presetColors[i % presetColors.length]);
+        }
+        return palette;
+    }
+
+    // Initiera färgpaletten i UI
+    function initColorPalette() {
+        const container = document.getElementById('colorPalette');
+        const hiddenInput = document.getElementById('selectedColor');
+        container.innerHTML = '';
+        
+        presetColors.forEach((color, index) => {
+            const div = document.createElement('div');
+            div.className = 'color-option';
+            div.style.backgroundColor = color;
+            if (index === 0) {
+                div.classList.add('selected');
+                hiddenInput.value = color;
+            }
+            div.onclick = function() {
+                document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+                div.classList.add('selected');
+                hiddenInput.value = color;
+            };
+            container.appendChild(div);
+        });
+    }
+    initColorPalette();
+
+    // --- LOGIK: LÄGG TILL ---
+
+    function addMetricDefinition() {
+        const nameInput = document.getElementById('metricName');
+        const colorVal = document.getElementById('selectedColor').value; 
+        const name = nameInput.value.trim();
+
+        if (!name) return alert("Skriv in ett namn!");
+
+        const id = 'metric_' + Date.now();
+        const newMetric = { id: id, label: name, color: colorVal };
+        metricDefinitions.push(newMetric);
+
+        // Lägg till dataset (för stapeldiagrammet)
+        chartData.datasets.push({
+            label: name,
+            data: new Array(chartData.labels.length).fill(0),
+            backgroundColor: newMetric.color,
+            borderColor: newMetric.color,
+            borderWidth: 1,
+            yAxisID: 'y1' // Höger axel för statistik
+        });
+
+        renderMetricBadges();
+        generateDynamicInputs();
+        updateTableHeader();
+        updatePieSelector(); // Uppdatera dropdown för cirkeldiagrammet
+        
+        nameInput.value = '';
+        updateAllCharts();
+    }
+
+    function renderMetricBadges() {
+        const container = document.getElementById('activeMetricsList');
+        container.innerHTML = '';
+        metricDefinitions.forEach(m => {
+            const badge = document.createElement('span');
+            badge.className = 'metric-badge';
+            badge.style.backgroundColor = m.color;
+            badge.innerText = m.label;
+            container.appendChild(badge);
+        });
+    }
+
+    function generateDynamicInputs() {
+        const container = document.getElementById('dynamicInputs');
+        if (metricDefinitions.length > 0) container.style.display = 'block';
+        
+        container.innerHTML = '<h3>Fyll i statistik:</h3>';
+        metricDefinitions.forEach(m => {
+            const label = document.createElement('label');
+            label.innerText = m.label;
+            label.style.color = m.color;
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.id = 'input_' + m.id;
+            input.placeholder = `Antal ${m.label}`;
+            input.value = 0;
+            container.appendChild(label);
+            container.appendChild(input);
+        });
+    }
+
+    function updateTableHeader() {
+        const headerRow = document.getElementById('tableHeader');
+        headerRow.innerHTML = '<th>Namn</th><th>Timmar</th>'; 
+        metricDefinitions.forEach(m => {
+            const th = document.createElement('th');
+            th.innerText = m.label;
+            th.style.color = m.color;
+            headerRow.appendChild(th);
+        });
+        const thDel = document.createElement('th');
+        thDel.innerText = 'Åtgärd';
+        headerRow.appendChild(thDel);
+        renderTableRows(); 
+    }
+
+    // Uppdatera listan där man väljer vad cirkeldiagrammet ska visa
+    function updatePieSelector() {
+        const selector = document.getElementById('pieMetricSelector');
+        const currentVal = selector.value;
+        
+        selector.innerHTML = '<option value="0">Arbetstimmar</option>';
+        metricDefinitions.forEach((m, index) => {
+            // index + 1 eftersom timmar är på plats 0
+            selector.innerHTML += `<option value="${index + 1}">${m.label}</option>`;
+        });
+
+        if(currentVal) selector.value = currentVal; 
+    }
+
+    // --- LOGIK: LÄGG TILL PERSONAL ---
+    document.getElementById('employeeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('empName').value;
+        const hours = Number(document.getElementById('empHours').value);
+
+        chartData.labels.push(name);
+        chartData.datasets[0].data.push(hours); 
+
+        let dsIndex = 1;
+        metricDefinitions.forEach(m => {
+            const val = Number(document.getElementById('input_' + m.id).value || 0);
+            chartData.datasets[dsIndex].data.push(val);
+            document.getElementById('input_' + m.id).value = 0;
+            dsIndex++;
+        });
+
+        document.getElementById('empName').value = '';
+        document.getElementById('empHours').value = '';
+        document.getElementById('empName').focus();
+
+        renderTableRows();
+        updateSummary();
+        updateAllCharts();
+    });
+
+    function renderTableRows() {
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.innerHTML = '';
+        chartData.labels.forEach((name, i) => {
+            const tr = document.createElement('tr');
+            let html = `<td>${name}</td><td>${chartData.datasets[0].data[i]}</td>`;
+            for (let d = 1; d < chartData.datasets.length; d++) {
+                html += `<td>${chartData.datasets[d].data[i]}</td>`;
+            }
+            html += `<td><button class="btn-danger" onclick="removePerson(${i})">Ta bort</button></td>`;
+            tr.innerHTML = html;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function removePerson(index) {
+        if(!confirm("Vill du ta bort " + chartData.labels[index] + "?")) return;
+        chartData.labels.splice(index, 1);
+        chartData.datasets.forEach(ds => {
+            ds.data.splice(index, 1);
+        });
+        renderTableRows();
+        updateSummary();
+        updateAllCharts();
+    }
+
+    function updateSummary() {
+        const box = document.getElementById('summaryBox');
+        if (chartData.labels.length === 0) {
+            box.innerText = "Ingen data inlagd ännu.";
+            return;
+        }
+        let html = '';
+        chartData.datasets.forEach(ds => {
+            const sum = ds.data.reduce((a, b) => Number(a) + Number(b), 0);
+            html += `<span class="summary-item">${ds.label}: ${sum} st</span>`;
+        });
+        box.innerHTML = html;
+    }
+
+    function updateAllCharts() {
+        updateMainChart();
+        updateDetailChart();
+    }
+
+    // --- GRAF 1: STAPELDIAGRAMMET (Totalen) ---
+    function updateMainChart() {
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const type = document.getElementById('mainChartType').value; // Bar eller Line
+
+        if (mainChartInstance) mainChartInstance.destroy();
+
+        // Skapa en kopia av datan för stapeldiagrammet
+        let displayData = {
+            labels: chartData.labels,
+            datasets: []
+        };
+
+        chartData.datasets.forEach(ds => {
+            let newDs = Object.assign({}, ds);
+            if(type === 'line') { 
+                newDs.fill = false; 
+                newDs.tension = 0.3; 
+            }
+            displayData.datasets.push(newDs);
+        });
+
+        mainChartInstance = new Chart(ctx, {
+            type: type,
+            data: displayData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    y: { 
+                        type: 'linear', display: true, position: 'left',
+                        title: { display: true, text: 'Timmar' },
+                        beginAtZero: true
+                    },
+                    y1: {
+                        type: 'linear', display: true, position: 'right',
+                        title: { display: true, text: 'Antal' },
+                        grid: { drawOnChartArea: false }, // Dölj rutnät för att minska kladd
+                        beginAtZero: true
+                    }
+                },
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    }
+
+    // --- GRAF 2: CIRKELDIAGRAMMET (Detalj) ---
+    function updateDetailChart() {
+        const ctx = document.getElementById('detailChart').getContext('2d');
+        const type = document.getElementById('pieType').value;
+        const selectedIndex = document.getElementById('pieMetricSelector').value;
+
+        if (detailChartInstance) detailChartInstance.destroy();
+
+        // Hämta det valda datasetet
+        let sourceDs = chartData.datasets[parseInt(selectedIndex)];
+        
+        // Skapa data specifikt för cirkeln
+        let pieData = {
+            labels: chartData.labels, // Namnen
+            datasets: [{
+                data: sourceDs.data, // Siffrorna (t.ex. chattar)
+                backgroundColor: getPiePalette(chartData.labels.length), // FÄRGER PER PERSON
+                borderColor: '#ffffff',
+                borderWidth: 2
+            }]
+        };
+
+        detailChartInstance = new Chart(ctx, {
+            type: type,
+            data: pieData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' }, // Lista namnen till höger
+                    title: {
+                        display: true,
+                        text: 'Fördelning: ' + sourceDs.label,
+                        font: { size: 16 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let val = context.parsed;
+                                let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                let percentage = Math.round((val / total) * 100) + '%';
+                                return `${context.label}: ${val} (${percentage})`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Start
+    updatePieSelector();
+    updateAllCharts();
+
+</script>
+
+</body>
+</html>
