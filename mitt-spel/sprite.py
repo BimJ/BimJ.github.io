@@ -50,3 +50,27 @@ class EnemySprite(baseSprite):
     def draw(self):
         # Draw the enemy sprite at its current position
         pyxel.blt(self.x, self.y, 0, 8, 0, self.w, self.h, 0)  # Draw from image bank 0, source (8, 0), size (w, h), transparent color 0
+
+
+class SpikeSprite(baseSprite):
+    def __init__(self, x, y):
+        # Initialize the spike sprite with specific size and color
+        super().__init__(x, y, 8, 8, 8)
+
+    def draw(self):
+        # Draw the spike sprite at its current position
+        # Update the (u, v) source coordinates below to match where
+        # your spike tile is actually drawn in cave_traps.pyxres
+        pyxel.blt(self.x, self.y, 0, 16, 0, self.w, self.h, 0)
+
+
+class BallSprite(baseSprite):
+    def __init__(self, x, y):
+        # Initialize the ball sprite with specific size and color
+        super().__init__(x, y, 8, 8, 8)
+
+    def draw(self):
+        # Draw the ball sprite at its current position
+        # Update the (u, v) source coordinates below to match where
+        # your ball tile is actually drawn in cave_traps.pyxres
+        pyxel.blt(self.x, self.y, 0, 24, 0, self.w, self.h, 0)
