@@ -119,7 +119,7 @@ class Game:
         # GAME OVER state handling can be added here if needed
         if self.Game_sate == "GAME_OVER":
             if pyxel.btnp(pyxel.KEY_SPACE):  # Restart the game when space is pressed
-                self.Score = 0  # Reset score
+                self.score = 0  # Reset score
                 self.generate_level()  # Regenerate the level
                 self.Player.x = 10  # Reset player position
                 self.Player.y = H - 30  # Reset player position
